@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+    <property name="LOG_PATH" value="./logs" />
+
+    <!-- Appenders : 로그의 형태 설정, 어떤 방법으로 출력할지 설정.
+            ConsoleAppender: 콘솔에 로그를 출력
+            FileAppender: 파일에 로그를 저장
+            RollingFile Appender: 여러 개의 파일을 순회하면서 로그를 저장
+            SMTPAppender: 메일로 로그를 전송
+            DBAppender: 데이터베이스에 로그를 저장 -->
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <encoder>
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%-5level] [%thread] %logger %msg%n</pattern>
+            <!-- %Logger{length}: 로거의 이름 / %-5level: 로그레벨. -5는 출력 고정폭의 값 / %msg(%message): 로그메시지 -->
+        </encoder>
+    </appender>
+
+    <appender name="INFO_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <file>${LOG_PATH}/info.log</file>
+        <append>true</append>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/info_${type}.%d{yyyy-MM-dd}.gz</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%-5level] [%thread] %logger %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- TRACE > DEBUG > INFO > WARN > ERROR > OFF -->
+    <!-- Root Logger -->
+    <root level="INFO">
+        <appender-ref ref="console"/>
+        <appender-ref ref="INFO_LOG"/>
+    </root>
+</configuration>
+
+        <!-- pattern layout
+            %p : 로깅 레벨
+            %d : 로그 기록 시간 SimpleDateFormat 을 따름( ex) %d{yyyy-MM-dd HH:mm:ss} )
+            %t : 로그 쓰레드 이름
+            %F : 로깅 발생한 애플리케이션 파일명( ex) HolloWorld.java 등으로 표시됨)
+            %c : 로깅 발생 카테고리 / %C : 클래스명(만약 패키지가 너무 길다면 %c{숫자}로 조절 가능)
+            (ex) action.test1.test2.LoginAction.class => %c{1} : LoginAction /  %c{2} : test2.LoginAction
+              %c{3} : test1.test2.LoginAction / %c{4} : action.test1.test2.LoginAction .....  )
+            %M : 로그 발생 메서드명
+            %L : 호출 코드 라인(로깅이 발생한 호출 지점의 라인 수)
+            %r : 애플리케이션 실행 후 로깅이 발생한 시점까지의 시간
+            %m : 로그로 전달된 메시지(즉, 발생하도록 세팅한 메시지)
+            %n : 개행
+         -->
